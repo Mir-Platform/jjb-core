@@ -18,7 +18,7 @@
     GIT_CRED_ID: jenkins-bitbucket-integration
 
     triggers:
-        - timed: 'H * * * *'
+        - timed: 'H(0-59) * * * *'
 
     parameters:
         - string:
@@ -26,7 +26,7 @@
             default: '{GIT_BRANCH}'
             description: Git ref (branch/tag/SHA)
         - string:
-            name: GIT_CRED_ID
+            name: GIT_CRED_IDjenkins
             default: '{GIT_CRED_ID}'
             description: Jenkins credentials ID for BitBucket
         - string:
