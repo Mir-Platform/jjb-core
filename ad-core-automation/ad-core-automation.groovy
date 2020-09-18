@@ -32,6 +32,7 @@ pipeline {
                 withDockerContainer('python:3.8.2-slim') {
                     withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'pip install --user --upgrade -r auto/requirements.txt'
+                    sleep(5)
                     echo 'Run automation'
                     withCredentials([usernamePassword(credentialsId: 'ad_tech', passwordVariable: 'ad_pass', usernameVariable: 'ad_user')]) {
                         dir('auto') {
