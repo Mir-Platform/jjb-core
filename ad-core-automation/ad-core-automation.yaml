@@ -1,0 +1,47 @@
+---
+- job:  # Создаем директорию CORE
+    name: CORE
+    project-type: folder
+
+- job:  # Создаем поддиректорию ad-core-automation в CORE
+    name: CORE/ad-core-automation
+    project-type: folder
+
+# Описание темплэйта
+- job-template:
+    name: 'CORE/ad-core-automation/{name}-{project_key}'
+    project-type: pipeline
+    job_description: Упралвение OU и SG для {project_key}
+
+    # Defaults
+    GIT_BRANCH: master
+    GIT_CRED_ID: jenkins-bitbucket-integration
+
+    triggers:
+        - timed: 'H * * * *'
+
+    parameters:
+        - string:
+            name: GIT_BRANCH
+            default: '{GIT_BRANCH}'
+            description: Git ref (branch/tag/SHA)
+        - string:
+            name: GIT_CRED_ID
+            default: '{GIT_CRED_ID}'
+            description: Jenkins credentials ID for BitBucket
+        - string:
+            name: META_LOCATION
+            default: 'DEV/{project_key}/{project_key}_meta.yaml'
+            description: Meta file location if CORE/meta repository
+    
+    dsl: !include-raw-escape: ./ad-core-automation.groovy
+
+- project:
+    name: ad-core
+    project_key:
+        - project1
+        - project2
+        - project3
+    jobs:
+        - 'CORE/ad-core-automation/{name}-{project_key}'
+
