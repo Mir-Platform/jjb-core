@@ -1,7 +1,9 @@
-####Для работы jenkins job builder следует ознакомиться с его документацией
+Для работы jenkins job builder следует ознакомиться с его документацией
+```python
 https://docs.openstack.org/infra/jenkins-job-builder/
-
-####Если коротко, то:
+```
+Если коротко, то:
+---
 Требуется установленный плагин на вашем jenkins:
 ```python
 https://plugins.jenkins.io/job-dsl/
