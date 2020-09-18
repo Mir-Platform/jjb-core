@@ -1,0 +1,54 @@
+---
+
+# Создаем директорию CORE
+- job:
+    name: CORE
+    project-type: folder
+
+# Создаем поддиректорию ad-core-automation в CORE
+- job:
+    name: CORE/nexus-core-automation
+    project-type: folder
+
+# Описание темплэйта
+- job-template:
+    name: 'CORE/nexus-core-automation/{name}-{project_key}'
+    project-type: pipeline
+
+    job_description: Упралвение nexus3 для {project_key}
+
+    # Defaults
+    git_branch: master
+    git_credentials: jenkins-nexus-integration
+
+    triggers:
+        - timed: 'H(0-59) * * * *'
+
+    parameters:
+        - string:
+            name: GIT_BRANCH
+            default: '{git_branch}'
+            description: Git ref (branch/tag/SHA)
+        - string:
+            name: GIT_CRED_ID
+            default: '{git_credentials}'
+            description: Jenkins credentials ID for BitBucket
+        - string:
+            name: META_LOCATION
+            default: 'DEV/{project_key}/{project_key}_meta.yaml'
+            description: Meta file location if CORE/meta repository
+        - string:
+            name: NEXUS_URL
+            default: 'http://nuc.local:8081'
+            description: Nexus URL
+
+    dsl: !include-raw-escape: ./nexus-core-automation.groovy
+
+- project:
+    name: nexus-core
+    project_key:
+        - project1
+        - project2
+        - project3
+    jobs:
+        - 'CORE/nexus-core-automation/{name}-{project_key}'
