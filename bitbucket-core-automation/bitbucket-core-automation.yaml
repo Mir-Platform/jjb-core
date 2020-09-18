@@ -1,0 +1,47 @@
+---
+
+- job:
+    name: CORE
+    project-type: folder
+
+- job:
+    name: CORE/bitbucket-core-automation
+    project-type: folder
+
+- job-template:
+    name: 'CORE/bitbucket-core-automation/{name}-{project_key}'
+    project-type: pipeline
+
+    job_description: Создание проектов в Bitbucket и управление привилегиями
+
+    # Defaults
+    git_branch: master
+    git_credentials: jenkins-bitbucket-integration
+
+    triggers:
+        - timed: 'H(0-59) * * * *'
+
+    parameters:
+        - string:
+            name: GIT_BRANCH
+            default: '{git_branch}'
+            description: Git ref (branch/tag/SHA)
+        - string:
+            name: GIT_CRED_ID
+            default: '{git_credentials}'
+            description: Jenkins credentials ID for BitBucket
+        - string:
+            name: META_LOCATION
+            default: 'KCOD/{project_key}/{project_key}_meta.yaml'
+            description: Meta file location in CORE/meta repository
+
+    dsl: !include-raw-escape: ./bitbucket-core-automation.groovy
+
+- project:
+    name: bitbucket-core
+    project_key:
+        - project1
+        - project2
+        - project3
+    jobs:
+        - 'CORE/bitbucket-core-automation/{name}-{project_key}'
